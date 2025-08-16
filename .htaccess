@@ -1,0 +1,15 @@
+# Activa el motor de reescritura de Apache, para que las reglas siguientes funcionen.
+RewriteEngine On 
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
+
+# En orden solo aplica la regla si la URL solicitada NO es !-d: un directorio real, !-f: un archivo real,!-l: un enlace simbólico real.
+# ^(.*)$: Captura toda la URL solicitada (por ejemplo, producto/ver/5),
+# Redirige la URL solicitada a index.php, pasando la URL como parámetro de consulta con el nombre "url".
+# producto/ver/5 se convierte en index.php?url=producto/ver/5.
+# [L,QSA]: L indica que es la última regla a aplicar si coincide, QSA (Query String Append) Conserva los parámetros de la query string original (como ?id=5).
+# Esa URL se interpretara en la clase App, que es el enrutador del sistema.
