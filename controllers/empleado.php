@@ -5,7 +5,7 @@ class Empleado extends Controller {
         parent::__construct();
     }
 
-      function index() {
+      function index($data = []) {
         $empleados = $this->model->getAll();
         $this->view->empleados = $empleados;
         $this->view->render('empleado/index');

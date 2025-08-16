@@ -4,9 +4,10 @@ class View{
         
     }
 
-    function render($nombre){
-    require 'views/' . $nombre . '.php';
-}
+    function render($nombre, $data = []) {
+        $this->d = $data;
+        require 'views/' . $nombre . '.php';
+    }
 
 
 

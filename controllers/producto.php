@@ -6,7 +6,7 @@ class Producto extends Controller {
     }
 
     // Mostrar formulario y producto registrado (si existe)
-    public function index() {
+    public function index($data = []) {
         $limit = 5;
     $paginaActual = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
     $offset = ($paginaActual - 1) * $limit;

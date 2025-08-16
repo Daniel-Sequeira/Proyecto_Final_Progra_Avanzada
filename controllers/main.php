@@ -6,7 +6,7 @@ class Main extends Controller {
         parent::__construct();
       
     }
-      function index(){
+      function index($data = []) {
         $this->view->render('main/index');
     }
 

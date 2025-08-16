@@ -6,7 +6,7 @@ class Cliente extends Controller {
     }
 
     // Mostrar la lista de clientes
-    function index() {
+    function index($data = []) {
         $clientes = $this->model->getAll();
         $this->view->clientes = $clientes;
         $this->view->render('cliente/index');

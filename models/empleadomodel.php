@@ -106,6 +106,43 @@ class EmpleadoModel extends Model {
         return false;
     }
     }
+
+    // Autenticar empleado por cédula y contraseña
+public function autenticar($cedula, $contrasena) {
+    try {
+        $query = $this->db->connect()->prepare(
+            "SELECT * FROM empleado WHERE (cedula = :cedula) LIMIT 1"
+        );
+        $query->execute(['cedula' => $cedula]);
+        $empleado = $query->fetch(PDO::FETCH_ASSOC);
+
+        if($empleado) {
+            // Verifica que el usuario está activo
+            if($empleado['estado'] != 1) {
+                return ['success' => false, 'error' => 'Usuario inactivo'];
+            }
+            // Compara contraseña con hash
+            if(password_verify($contrasena, $empleado['contrasena'])) {
+                return ['success' => true, 'empleado' => $empleado];
+            } else {
+                return ['success' => false, 'error' => 'Contraseña incorrecta'];
+            }
+        } else {
+            return ['success' => false, 'error' => 'Cédula o correo incorrectos'];
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        return ['success' => false, 'error' => 'Error de base de datos'];
+    }
+}
+
+
+    
+
+
+
+
+
 }
 
 ?>
