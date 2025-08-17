@@ -9,7 +9,19 @@ $rol = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : '';
     <div class="position-sticky pt-3 sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
-                 <!-- Publico -->
+                <span class="nav-link disabled">
+                    Funcionario <?php echo isset($_SESSION['nombre']) ? htmlspecialchars($_SESSION['nombre']) : 'Invitado'; ?> 
+                     <?php
+                        if ($rol == 1) {
+                            echo 'Administrador';
+                        } elseif ($rol == 2) {
+                            echo 'Usuario';
+                        } else {
+                            echo 'Desconocido';
+                        }
+                    ?>
+                </span>
+                <!-- Publico -->
                 <a class="nav-link <?= basename($_SERVER['PHP_SELF'])=="index.php"?'active':''?>"
                     href="<?php echo constant('URL'); ?>logout">
                     <span data-feather="book" class="align-text-bottom"></span>
