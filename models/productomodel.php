@@ -61,6 +61,7 @@ class ProductoModel extends Model {
                 'cantidad'    => $datos['cantidad'],
                 'estado'      => $datos['estado'],
                 'idProducto'  => $datos['idProducto']
+                
             ];
             $query->execute($params);
             return true;
@@ -95,6 +96,26 @@ public function getTotalProductos() {
         return 0;
     }
 }
+
+public function getAllProductos() {
+    try {
+        $query = $this->db->connect()->query("SELECT * FROM producto WHERE estado = 1");
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        return [];
+    }
+}
+
+
+public function buscarProductosPorMarca($marca) {
+    $sql = "SELECT * FROM producto WHERE estado = 1 AND marca LIKE :marca";
+    $query = $this->db->connect()->prepare($sql);
+    $query->execute(['marca' => '%' . $marca . '%']);
+    return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require 'models/empleadomodel.php';
 require_once 'config/config.php';
 
@@ -34,9 +34,11 @@ class Login extends Controller {
                     return;
                 }
                 // Guardar datos importantes en la sesión
+                session_start();
                 $_SESSION['id_empleado'] = $resultado['empleado']['id_empleado'];
                 $_SESSION['cedula']      = $resultado['empleado']['cedula'];
                 $_SESSION['nombre']      = $resultado['empleado']['nombre'];
+                $_SESSION['id_rol'] = $resultado['empleado']['id_rol'];
                 // Redirige a dashboard/pages
                 $this->redirect('dashboard', []);
                 exit();

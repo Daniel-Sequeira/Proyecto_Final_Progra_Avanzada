@@ -1,14 +1,10 @@
 <?php
 class Logout extends Controller {
-    public function __construct() {
-        parent::__construct();
-    }
-
-    public function index($data= []) {
-        session_unset();
+    public function index($data = []) {
+        session_start();
+        $_SESSION = [];
         session_destroy();
-        // Redirige al login
-        $this->redirect('login', []);
+        header("Location: " . constant('URL') . "login");
         exit();
     }
 }

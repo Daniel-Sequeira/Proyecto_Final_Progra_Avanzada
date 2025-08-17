@@ -1,4 +1,6 @@
 <?php
+session_start();
+$rol = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : '';
 class Producto extends Controller {
 
     function __construct(){
