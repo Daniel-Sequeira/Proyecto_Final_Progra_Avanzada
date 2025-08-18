@@ -41,7 +41,7 @@ if (!isset($mensaje)) {
             <p class="mt-5 mb-3 text-muted">Zapatería SM &copy; <?= date('Y') ?></p>
         </form>
     </main>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

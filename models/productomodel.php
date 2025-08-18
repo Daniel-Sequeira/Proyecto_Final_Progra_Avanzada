@@ -7,12 +7,38 @@ class ProductoModel extends Model {
 
     // Insertar un nuevo producto
     public function insert($datos) {
-        try {
-            $query = $this->db->connect()->prepare(
-                'INSERT INTO producto (marca, descripcion, talla, precio, cantidad, estado)
-                 VALUES (:marca, :descripcion, :talla, :precio, :cantidad, :estado)'
+    try {
+        // Buscar si el producto ya existe (por marca, descripcion, talla y precio)
+        $query = $this->db->connect()->prepare(
+            'SELECT idProducto, cantidad FROM producto 
+             WHERE marca = :marca AND descripcion = :descripcion AND talla = :talla AND precio = :precio'
+        );
+        $query->execute([
+            'marca'       => $datos['marca'],
+            'descripcion' => $datos['descripcion'],
+            'talla'       => $datos['talla'],
+            'precio'      => $datos['precio'],
+        ]);
+
+        $producto = $query->fetch();
+
+        if ($producto) {
+            // Si existe, actualiza la cantidad sumando la nueva
+            $updateQuery = $this->db->connect()->prepare(
+                'UPDATE producto SET cantidad = cantidad + :cantidad WHERE idProducto = :idProducto'
             );
-            $query->execute([
+            $updateQuery->execute([
+                'cantidad'   => $datos['cantidad'],
+                'idProducto' => $producto['idProducto']
+            ]);
+            return $producto['idProducto']; // Devuelve el ID del producto actualizado
+        } else {
+            // Si no existe, inserta un nuevo registro
+            $insertQuery = $this->db->connect()->prepare(
+                'INSERT INTO producto (marca, descripcion, talla, precio, cantidad, estado)
+                VALUES (:marca, :descripcion, :talla, :precio, :cantidad, :estado)'
+            );
+            $insertQuery->execute([
                 'marca'       => $datos['marca'],
                 'descripcion' => $datos['descripcion'],
                 'talla'       => $datos['talla'],
@@ -20,13 +46,14 @@ class ProductoModel extends Model {
                 'cantidad'    => $datos['cantidad'],
                 'estado'      => $datos['estado']
             ]);
-            // Devuelve el último ID insertado o true, según lo que prefieras usar
             return $this->db->connect()->lastInsertId();
-        } catch(PDOException $e) {
-            error_log($e->getMessage());
-            return false;
         }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        return false;
     }
+}
+
 
     // Obtener producto por ID
     public function getById($idProducto) {
