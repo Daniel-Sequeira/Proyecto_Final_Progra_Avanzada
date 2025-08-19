@@ -28,12 +28,6 @@ $rol = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : '';
                     Salir
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF'])=="index.php"?'active':''?>"
-                    href="<?php echo constant('URL'); ?>factura">
-                    <span data-feather="book" class="align-text-bottom"></span>
-                    Facturas
-                </a>
                
                 <a class="nav-link <?= basename($_SERVER['PHP_SELF'])=="index.php"?'active':''?>"
                     href="<?php echo constant('URL'); ?>cliente">
