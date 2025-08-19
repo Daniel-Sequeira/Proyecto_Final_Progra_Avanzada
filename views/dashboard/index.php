@@ -59,26 +59,25 @@
                                             : '<span data-feather="clock" class="align-text-bottom"></span>';
                                         $estado_nombre = $producto['estado'] == 1 ? "Activo" : "Inactivo";
                                     ?>
-                                <tr id="producto-<?= $producto['idProducto'] ?>">
-                                    <td><?= htmlspecialchars($producto['marca']) ?></td>
-                                    <td><?= htmlspecialchars($producto['descripcion']) ?></td>
-                                    <td><?= htmlspecialchars($producto['talla']) ?></td>
-                                    <td>$<?= number_format($producto['precio'], 2) ?></td>
-                                    <td><?= htmlspecialchars($producto['cantidad']) ?></td>
-                                    <td>
-                                        <span class="badge text-bg-<?= $estado_color ?>">
-                                            <?= $estado_icon ?> <?= $estado_nombre ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <form action="<?php echo constant('URL'); ?>carrito/agregar" method="post"
-                                            style="display:inline;">
-                                            <input type="hidden" name="idProducto"
-                                                value="<?= htmlspecialchars($producto['idProducto']) ?>">
-                                            <button type="submit" class="btn btn-success btn-sm">Agregar al
-                                                carrito</button>
-                                        </form>
-                                    </td>
+                                <td><?= htmlspecialchars($producto['marca']) ?></td>
+                                <td><?= htmlspecialchars($producto['descripcion']) ?></td>
+                                <td><?= htmlspecialchars($producto['talla']) ?></td>
+                                <td><?php echo "&#8353;"?><?= number_format($producto['precio'], 2) ?></td>
+                                <td><?= htmlspecialchars($producto['cantidad']) ?></td>
+                                <td>
+                                    <span class="badge text-bg-<?= $estado_color ?>">
+                                        <?= $estado_icon ?> <?= $estado_nombre ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <form action="<?php echo constant('URL'); ?>carrito/agregar" method="post"
+                                        style="display:inline;">
+                                        <input type="hidden" name="idProducto"
+                                            value="<?= htmlspecialchars($producto['idProducto']) ?>">
+                                        <button type="submit" class="btn btn-success btn-sm">Agregar al
+                                            carrito</button>
+                                    </form>
+                                </td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php else : ?>
@@ -104,70 +103,87 @@
                                 </div>
                                 <div class="modal-body">
                                     <?php if (!empty($_SESSION['carrito'])): ?>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Producto</th>
-                                                    <th scope="col">Marca</th>
-                                                    <th scope="col">Descripción</th>
-                                                    <th scope="col" class="text-end">Precio</th>
-                                                    <th scope="col" class="text-center">Cantidad</th>
-                                                    <th scope="col" class="text-end">Subtotal</th>
-                                                    <th scope="col" class="text-center">Acción</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php $total = 0; ?>
-                                                <?php foreach ($_SESSION['carrito'] as $item): ?>
-                                                <?php $subtotal = $item['precio'] * $item['cantidad'];
-                                  $total += $subtotal; ?>
-                                                <tr>
-                                                    <td>
-                                                        <i class="bi bi-box"></i>
-                                                        <?= htmlspecialchars($item['idProducto']) ?>
-                                                    </td>
-                                                    <td><?= htmlspecialchars($item['marca']) ?></td>
-                                                    <td><?= htmlspecialchars($item['descripcion']) ?></td>
-                                                    <td class="text-end">$<?= number_format($item['precio'], 2) ?></td>
-                                                    <td class="text-center"><?= $item['cantidad'] ?></td>
-                                                    <td class="text-end">$<?= number_format($subtotal, 2) ?></td>
-                                                    <td class="text-center">
-                                                        <form action="<?php echo constant('URL'); ?>carrito/quitar"
-                                                            method="post" class="d-inline">
-                                                            <input type="hidden" name="idProducto"
-                                                                value="<?= htmlspecialchars($item['idProducto']) ?>">
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                title="Eliminar">
+                                    <form action="<?php echo constant('URL'); ?>carrito/actualizar" method="post">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Marca</th>
+                                                        <th>Descripción</th>
+                                                        <th>Talla</th>
+                                                        <th class="text-center">Cantidad</th>
+                                                        <th class="text-end">Precio (₡)</th>
+                                                        <th class="text-end">Subtotal (₡)</th>
+                                                        <th class="text-center">Desc. (%)</th>
+                                                        <th class="text-end">Imp. total (₡)</th>
+                                                        <th class="text-end">Total (₡)</th>
+                                                        <th class="text-center">Acción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php 
+                                $total_general = 0; 
+                                foreach ($_SESSION['carrito'] as $item): 
+                                    $descuento = isset($item['descuento']) ? $item['descuento'] : 0;
+                                    $impuesto = isset($item['impuesto']) ? $item['impuesto'] : 16;
+                                    $precio_unit = $item['precio'];
+                                    $cantidad = $item['cantidad'];
+                                    $subtotal = $precio_unit * $cantidad * (1 - $descuento / 100);
+                                    $imp_valor = $subtotal * $impuesto / 100;
+                                    $total = $subtotal + $imp_valor;
+                                    $total_general += $total;
+                                ?>
+                                                    <tr>
+                                                        <td><?= htmlspecialchars($item['marca']) ?></td>
+                                                        <td><?= htmlspecialchars($item['descripcion']) ?></td>
+                                                        <td><?= htmlspecialchars($item['talla'] ?? '-') ?></td>
+                                                        <td class="text-center"><?= $cantidad ?></td>
+                                                        <td class="text-end">₡<?= number_format($precio_unit, 2) ?></td>
+                                                        <td class="text-end">₡<?= number_format($subtotal, 2) ?></td>
+                                                        <td>
+                                                            <input type="number" min="0" max="100" step="1"
+                                                                class="form-control form-control-sm w-75 text-end"
+                                                                name="descuento[<?= $item['idProducto'] ?>]"
+                                                                value="<?= $descuento ?>">
+                                                        </td>
+                                                        <td class="text-end">₡<?= number_format($imp_valor, 2) ?></td>
+                                                        <td class="text-end">₡<?= number_format($total, 2) ?></td>
+                                                        <td class="text-center">
+                                                            <a href="<?php echo constant('URL'); ?>carrito/quitar?id=<?= $item['idProducto'] ?>"
+                                                                class="btn btn-sm btn-outline-danger" title="Eliminar">
                                                                 <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="fw-bold">
-                                                    <td colspan="5" class="text-end">Total:</td>
-                                                    <td class="text-end text-success">$<?= number_format($total, 2) ?>
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <form action="<?php echo constant('URL'); ?>carrito/vaciar" method="post">
-                                            <button class="btn btn-outline-secondary">
-                                                <i class="bi bi-x-circle"></i> Vaciar Carrito
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="fw-bold">
+                                                        <td colspan="8" class="text-end">Total general:</td>
+                                                        <td class="text-end text-success">
+                                                            ₡<?= number_format($total_general, 2) ?></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <form action="<?php echo constant('URL'); ?>carrito/vaciar" method="post">
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="bi bi-x-circle"></i> Vaciar Carrito
+                                                </button>
+                                            </form>
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="bi bi-save"></i> Actualizar
                                             </button>
-                                        </form>
-                                        <form action="<?php echo constant('URL'); ?>carrito/finalizar" method="post">
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-cash-coin"></i> Confirmar y Facturar
-                                            </button>
-                                        </form>
-                                    </div>
+                                            <form action="<?php echo constant('URL'); ?>carrito/finalizar"
+                                                method="post">
+                                                <button class="btn btn-success">
+                                                    <i class="bi bi-cash-coin"></i> Confirmar y Facturar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </form>
                                     <?php else: ?>
                                     <div class="alert alert-info text-center" role="alert">
                                         <i class="bi bi-info-circle"></i> ¡Tu carrito está vacío!<br>
@@ -179,7 +195,6 @@
                         </div>
                     </div>
 
-
                     <!-- Feather Icons -->
                     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
                     <script>
@@ -190,15 +205,24 @@
                 <?php if (!empty($_SESSION['mensaje_carrito'])): ?>
                 <div class="container my-3">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>¡Listo!</strong> <?php echo $_SESSION['mensaje_carrito']; ?>
+                        <strong>¡Listo!</strong> <?php echo htmlspecialchars($_SESSION['mensaje_carrito']); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
                 <?php unset($_SESSION['mensaje_carrito']); ?>
                 <?php endif; ?>
+
+                <!-- Abrir modal automáticamente si se agregó un producto -->
+                <?php if (!empty($_SESSION['abrir_modal_carrito'])): ?>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var modal = new bootstrap.Modal(document.getElementById('carritoModal'));
+                    modal.show();
+                });
+                </script>
+                <?php unset($_SESSION['abrir_modal_carrito']); ?>
+                <?php endif; ?>
             </main>
-
-
         </div>
     </div>
 

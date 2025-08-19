@@ -90,5 +90,36 @@ class Carrito extends Controller
     exit();
 }
 
+public function actualizar() {
+    session_start();
+
+    if (!isset($_SESSION['carrito'])) {
+        $_SESSION['carrito'] = [];
+    }
+
+    // Validar si viene el array de descuentos
+    if (!empty($_POST['descuento'])) {
+        foreach ($_POST['descuento'] as $idProducto => $valor_descuento) {
+            $valor_descuento = max(0, min(100, intval($valor_descuento))); // limitar 0-100 %
+
+            // Buscar el producto en el carrito y actualizar descuento
+            foreach ($_SESSION['carrito'] as &$item) {
+                if ($item['idProducto'] == $idProducto) {
+                    $item['descuento'] = $valor_descuento;
+                }
+            }
+            unset($item); // romper referencia
+        }
+    }
+
+    // Opcional: mensaje de éxito
+    $_SESSION['mensaje_carrito'] = "Carrito actualizado correctamente.";
+    $_SESSION['abrir_modal_carrito'] = true;
+
+    header("Location: " . constant('URL') . "dashboard"); // Redirige al menú ppal
+    exit();
+}
+
+
 }
 ?>

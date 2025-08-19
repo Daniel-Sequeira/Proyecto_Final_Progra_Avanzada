@@ -41,6 +41,16 @@ if (!isset($mensaje)) {
             <p class="mt-5 mb-3 text-muted">Zapatería SM &copy; <?= date('Y') ?></p>
         </form>
     </main>
+    <script>
+    // cierra el alert automáticamente
+    setTimeout(function() {
+        var alertEl = document.querySelector('.alert-dismissible');
+        if (alertEl) {
+            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+            bsAlert.close();
+        }
+    }, 2500); // 2500 ms = 2.5 segundos
+    </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
