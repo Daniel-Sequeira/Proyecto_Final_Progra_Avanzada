@@ -1,5 +1,6 @@
 <?php
 class Cliente extends Controller {
+    public $db;
 
     function __construct(){
         parent::__construct();
@@ -47,5 +48,27 @@ class Cliente extends Controller {
             echo "Error al actualizar cliente";
         }
     }
+
+     //Eliminar cliente
+   public function eliminar() {
+    if (isset($_POST['id_cliente'])) {
+        $id_cliente = $_POST['id_cliente'];
+        if ($this->model->eliminar($id_cliente)) {
+            session_start();
+            $_SESSION['mensaje'] = 'Cliente eliminado exitosamente.';
+        } else {
+            session_start();
+            $_SESSION['mensaje'] = 'Error al eliminar el cliente.';
+        }
+        header('Location: ' . constant('URL') . 'cliente');
+        exit();
+    } else {
+        session_start();
+        $_SESSION['mensaje'] = 'ID de cliente no recibido.';
+        header('Location: ' . constant('URL') . 'cliente');
+        exit();
+    }
+}
+
 }
 ?>

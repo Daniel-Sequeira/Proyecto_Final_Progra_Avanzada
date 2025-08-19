@@ -82,5 +82,18 @@ class ClienteModel extends Model {
             return false;
         }
     }
+
+     public function eliminar($id_cliente) {
+        try {
+            $query = $this->db->connect()->prepare("DELETE FROM cliente WHERE id_cliente = :id_cliente");
+            $query->execute(['id_cliente' => $id_cliente]);
+            return true;
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+   
 }
 ?>
