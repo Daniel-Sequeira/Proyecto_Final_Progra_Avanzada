@@ -5,6 +5,8 @@ class Producto extends Controller {
 
     function __construct(){
         parent::__construct();
+         if (session_status() == PHP_SESSION_NONE) {
+            session_start();}
     }
 
     // Mostrar formulario y producto registrado (si existe)
