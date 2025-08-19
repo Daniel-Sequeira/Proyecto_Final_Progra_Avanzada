@@ -169,10 +169,21 @@ $pdf->SetFont('Arial', '', 12);
 $pdf->Cell(0, 8, utf8_decode('Cliente: ' . $nombre), 0, 1);
 $pdf->Cell(0, 8, utf8_decode('Cédula: ' . $cedula), 0, 1);
 
-$pdf->Ln(3);
-$pdf->SetFont('Arial', 'B', 14);
-$pdf->Cell(0, 8, utf8_decode('Zapatería SM'), 0, 1, 'C');
-$pdf->Ln(5);
+// --- Encabezado personalizado ---
+$pdf->SetFont('Arial', 'B', 18);
+
+// Texto a la izquierda
+$pdf->SetXY(10, 10); // Posición superior izquierda
+$pdf->Cell(0, 15, utf8_decode('Zapatería SM'), 0, 0, 'L');
+
+// Logo a la derecha, dentro de un recuadro
+$logoX = 180; // Ajusta si necesitas (según ancho del PDF)
+$logoY = 10;
+$pdf->Rect($logoX-5, $logoY-2, 95, 20); // Recuadro (x, y, ancho, alto)
+
+// Inserta logo
+$pdf->Image(constant('URL').'img/LogoZapateria.png', $logoX, $logoY, 85, 16); // (ruta, x, y, ancho, alto)
+$pdf->Ln(25); // Espacio debajo del encabezado
 
 // Encabezados (sumados ~269mm)
 $pdf->SetFont('Arial', 'B', 10);
