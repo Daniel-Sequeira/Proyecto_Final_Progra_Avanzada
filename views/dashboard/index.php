@@ -18,6 +18,26 @@
             <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
                 <?php require  __DIR__ . '/../../layout/sidebar.php'?>
             </nav>
+            <!-- Mensaje flotante superpuesto al modal del carrito -->
+            <?php if (!empty($_SESSION['mensaje_carrito'])): ?>
+            <div style="position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 1080; width: 400px; max-width: 90%;">
+                <div class="alert alert-success alert-dismissible fade show text-center shadow-lg" role="alert">
+                    <strong>¡Listo!</strong> <?php echo htmlspecialchars($_SESSION['mensaje_carrito']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+            <script>
+            setTimeout(function() {
+                var alertEl = document.querySelector('.alert-dismissible');
+                if (alertEl) {
+                    var bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+                    bsAlert.close();
+                }
+            }, 2500);
+            </script>
+            <?php unset($_SESSION['mensaje_carrito']); ?>
+            <?php endif; ?>
+
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <h1 class="h2">Menú Principal</h1>
                 <div class="container">
@@ -149,10 +169,16 @@
                                                         <td class="text-end">₡<?= number_format($imp_valor, 2) ?></td>
                                                         <td class="text-end">₡<?= number_format($total, 2) ?></td>
                                                         <td class="text-center">
-                                                            <a href="<?php echo constant('URL'); ?>carrito/quitar?id=<?= $item['idProducto'] ?>"
-                                                                class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                                <i class="bi bi-trash"></i>
-                                                            </a>
+                                                            <form action="<?php echo constant('URL'); ?>carrito/quitar"
+                                                                method="post" style="display:inline;">
+                                                                <input type="hidden" name="idProducto"
+                                                                    value="<?= $item['idProducto'] ?>">
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger"
+                                                                    title="Eliminar">
+                                                                    <span data-feather="trash-2"></span>
+                                                                </button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                     <?php endforeach; ?>
@@ -178,8 +204,9 @@
                                             </button>
                                             <form action="<?php echo constant('URL'); ?>carrito/finalizar"
                                                 method="post">
-                                                <button class="btn btn-success">
-                                                    <i class="bi bi-cash-coin"></i> Confirmar y Facturar
+                                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                                    data-bs-target="#clienteModal">
+                                                    <i class="bi bi-cash-coin"></i> Facturar
                                                 </button>
                                             </form>
                                         </div>
@@ -192,6 +219,31 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal buscar cliente -->
+                    <div class="modal fade" id="clienteModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form action="<?php echo constant('URL'); ?>carrito/buscarCliente" method="post"
+                                class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title">Datos del Cliente</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="cedula" class="form-label">Cédula del cliente</label>
+                                        <input type="text" class="form-control" id="cedula" name="cedula" required
+                                            maxlength="20">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-search"></i> Buscar cliente
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 

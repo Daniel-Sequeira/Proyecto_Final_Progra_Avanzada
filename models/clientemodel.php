@@ -32,6 +32,18 @@ class ClienteModel extends Model {
         }
     }
 
+    // Buscar cliente por cédula
+    public function getByCedula($cedula) {
+        try {
+            $query = $this->db->connect()->prepare("SELECT * FROM cliente WHERE cedula = :cedula");
+            $query->execute(['cedula' => $cedula]);
+            return $query->fetch(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            return null;
+        }
+    }
+
     // Insertar un nuevo cliente
     public function insert($datos) {
         try {
